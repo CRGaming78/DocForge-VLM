@@ -1,0 +1,48 @@
+# Data
+data/raw/
+data/processed/
+*.zip
+*.tar.gz
+
+# Model outputs
+outputs/
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Weights & Biases
+wandb/
+
+# Results (keep structure but not large files)
+results/*.png
+results/*.json
+!results/.gitkeep

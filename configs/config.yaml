@@ -1,0 +1,72 @@
+# DocForge-VLM Configuration
+# ===========================
+
+# Model Configuration
+model:
+  name: "Qwen/Qwen2-VL-2B-Instruct"
+  quantization:
+    enabled: true
+    bits: 4
+    quant_type: "nf4"
+    compute_dtype: "bfloat16"
+    use_double_quant: true
+
+# LoRA Configuration
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+# Data Configuration
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  max_image_size: 1280  # Max dimension for image resizing
+  seed: 42
+
+# Training Configuration
+training:
+  output_dir: "outputs"
+  num_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8  # Effective batch size = 16
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  lr_scheduler_type: "cosine"
+  max_seq_length: 1024
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  eval_steps: 50
+  save_steps: 100
+  save_total_limit: 3
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "none"  # Change to "wandb" for W&B logging
+
+# Evaluation Configuration
+evaluation:
+  output_dir: "results"
+  robustness:
+    jpeg_qualities: [10, 30, 50]
+    noise_sigmas: [10, 25, 50]
+    rotation_angles: [-10, -5, 5, 10]
+    brightness_factors: [0.7, 0.85, 1.15, 1.3]
+
+# Inference Configuration
+inference:
+  max_new_tokens: 512
+  temperature: 0.1
+  do_sample: false
