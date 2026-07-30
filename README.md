@@ -65,31 +65,31 @@ Digital identity verification systems process **billions of documents annually**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    DocForge-VLM Pipeline                  │
+│                    DocForge-VLM Pipeline                │
 ├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  ┌──────────────┐    ┌───────────────────────────────┐  │
-│  │  Document     │    │  Qwen2-VL-2B-Instruct         │  │
-│  │  Image        │───▶│  ┌─────────────────────────┐  │  │
-│  └──────────────┘    │  │  Vision Encoder (SigLIP)  │  │  │
-│                       │  │  (Frozen)                 │  │  │
-│  ┌──────────────┐    │  └──────────┬──────────────┘  │  │
-│  │  Prompt       │    │             │                  │  │
-│  │  "Analyze     │───▶│  ┌──────────▼──────────────┐  │  │
-│  │   this doc..."│    │  │  Language Model (Qwen2)  │  │  │
-│  └──────────────┘    │  │  + LoRA Adapters (r=16)   │  │  │
-│                       │  │  (Trained, 4-bit NF4)     │  │  │
-│                       │  └──────────┬──────────────┘  │  │
-│                       └─────────────┼────────────────┘  │
-│                                     │                    │
-│                       ┌─────────────▼────────────────┐  │
-│                       │  Output:                      │  │
-│                       │  VERDICT: TAMPERED            │  │
-│                       │  Analysis: Font inconsistency │  │
-│                       │  in name field, compression   │  │
-│                       │  artifacts near photo area... │  │
-│                       └──────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+│                                                        │
+│  ┌──────────────┐    ┌──────────────────────────────┐  │
+│  │  Document    │    │  Qwen2-VL-2B-Instruct        │  │
+│  │  Image       │───▶│  ┌─────────────────────────┐ │  │
+│  └──────────────┘    │  │  Vision Encoder (SigLIP)│ │  │
+│                      │  │  (Frozen)               │ │  │
+│  ┌──────────────┐    │  └──────────┬──────────────┘ │  │
+│  │  Prompt      │    │             │                │  │
+│  │ "Analyze     │───▶│  ┌──────────▼─────────────┐ │  │
+│  │  this doc..."│    │  │  Language Model (Qwen2) │ │  │
+│  └──────────────┘    │  │  + LoRA Adapters (r=16) │ │  │
+│                      │  │  (Trained, 4-bit NF4)   │ │  │
+│                      │  └──────────┬──────────────┘ │  │
+│                      └─────────────┼────────────────┘  │
+│                                    │                   │
+│                      ┌─────────────▼────────────────┐  │
+│                      │  Output:                     │  │
+│                      │  VERDICT: TAMPERED           │  │
+│                      │  Analysis: Font inconsistency│  │
+│                      │  in name field, compression  │  │
+│                      │  artifacts near photo area...│  │
+│                      └──────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
 ```
 
 ### Why VLMs for Forgery Detection?
