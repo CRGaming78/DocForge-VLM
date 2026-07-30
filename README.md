@@ -110,7 +110,7 @@ Digital identity verification systems process **billions of documents annually**
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/DocForge-VLM.git
+git clone https://github.com/CRGaming78/DocForge-VLM.git
 cd DocForge-VLM
 pip install -r requirements.txt
 ```
@@ -146,7 +146,7 @@ print(f"Verdict: {verdict} | Confidence: {confidence:.2f}")
 
 ### Dataset: SIDTD (Synthetic Identity Document Tampering Detection)
 
-- **Source**: [Zenodo](https://zenodo.org/records/7897381) (based on MIDV-2020)
+- **Source**: [GitHub](https://github.com/Oriolrt/SIDTD_Dataset) / [CVC Repository](https://tc11.cvc.uab.es/datasets/SIDTD_1) (based on MIDV-2020)
 - **Size**: 573 bonafide + 573 forged document images
 - **Forgery Type**: Text field replacement (name, date, ID number manipulation)
 - **Split**: 70% train / 15% val / 15% test (stratified)
@@ -161,8 +161,8 @@ print(f"Verdict: {verdict} | Confidence: {confidence:.2f}")
 ### Training Locally
 
 ```bash
-# 1. Download and prepare data
-python -m src.data.download --output_dir data/raw
+# 1. Download and prepare data (uses official SIDTD Python package)
+python -m src.data.download --output_dir data/raw --method package
 python -m src.data.prepare --raw_dir data/raw --output_dir data/processed
 
 # 2. Train with QLoRA

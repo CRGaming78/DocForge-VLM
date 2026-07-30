@@ -25,9 +25,17 @@ packages = [
     "qwen-vl-utils>=0.0.2",
     "scikit-learn",
     "seaborn",
+    "huggingface_hub",
 ]
 for pkg in packages:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", pkg])
+
+# Install SIDTD dataset package from GitHub
+subprocess.check_call(["git", "clone", "--depth", "1",
+    "https://github.com/Oriolrt/SIDTD_Dataset.git", "/tmp/SIDTD_Dataset"],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "/tmp/SIDTD_Dataset", "-q"],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # %%
 import os
@@ -69,6 +77,21 @@ print(f"CUDA available: {torch.cuda.is_available()}")
 if torch.cuda.is_available():
     print(f"GPU: {torch.cuda.get_device_name(0)}")
     print(f"VRAM: {torch.cuda.get_device_properties(0).total_mem / 1024**3:.1f} GB")
+
+# HuggingFace login
+from huggingface_hub import login
+hf_token = os.environ.get("HF_TOKEN")
+if not hf_token:
+    try:
+        from kaggle_secrets import UserSecretsClient
+        hf_token = UserSecretsClient().get_secret("HF_TOKEN")
+    except Exception:
+        pass
+if hf_token:
+    login(token=hf_token)
+    print("✅ Logged in to HuggingFace")
+else:
+    print("⚠️ No HF token found. Set HF_TOKEN as env var or Kaggle secret.")
 
 # Set seeds for reproducibility
 SEED = 42
@@ -122,11 +145,20 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 # DATASET DOWNLOAD & LOADING
 # ============================================================
 
-# Option 1: If dataset is uploaded as a Kaggle dataset
-KAGGLE_DATASET_PATH = "/kaggle/input/sidtd-dataset"
+# Method 1: Download using official SIDTD Python package
+DATA_DIR = Path("./data")
+DATA_DIR.mkdir(exist_ok=True)
 
-# Option 2: Download from source (uncomment if needed)
-# We'll try Kaggle first, then fallback to download
+try:
+    from SIDTD.data.DataLoader.Datasets import SIDTD as SIDTDDataset
+    data = SIDTDDataset(download_original=False, custom_path_to_download=str(DATA_DIR)).download_dataset("templates")
+    print("✅ SIDTD dataset downloaded via official package")
+except Exception as e:
+    print(f"⚠️ SIDTD package download failed: {e}")
+    print("Falling back to Kaggle dataset path...")
+
+# Method 2 (Fallback): Use dataset from Kaggle input
+KAGGLE_DATASET_PATH = "/kaggle/input/sidtd-dataset"
 
 def find_images(directory: Path) -> list[Path]:
     """Recursively find all image files in a directory."""
@@ -196,8 +228,9 @@ def load_sidtd_dataset(data_path: str) -> tuple[list[Path], list[int]]:
 # Try loading
 data_path = KAGGLE_DATASET_PATH
 if not os.path.exists(data_path):
-    # Try alternative paths
+    # Try alternative paths (SIDTD package downloads to DATA_DIR)
     alternatives = [
+        str(DATA_DIR),
         "/kaggle/input",
         "./data/raw",
         "./SIDTD",
